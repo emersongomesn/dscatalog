@@ -14,7 +14,7 @@ import com.devsuperior.dscatalog.dto.CategoryDTO;
 import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.services.exceptions.DataBaseException;
-import com.devsuperior.dscatalog.services.exceptions.EntityNotFoundExceptions;
+import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -35,7 +35,7 @@ public class CategoryService {
 	@Transactional(readOnly = true)
 	public CategoryDTO findById(Long id) {
 		Optional<Category> obj = repository.findById(id);
-		Category entity = obj.orElseThrow(() -> new EntityNotFoundExceptions("Entity Not found"));
+		Category entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity Not found"));
 		return new CategoryDTO(entity);
 	}
 
@@ -62,7 +62,7 @@ public class CategoryService {
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long id) {
 		if (!repository.existsById(id)) {
-			throw new EntityNotFoundExceptions("Recurso não encontrado");
+			throw new ResourceNotFoundException("Recurso não encontrado");
 		}
 		try {
 			repository.deleteById(id);

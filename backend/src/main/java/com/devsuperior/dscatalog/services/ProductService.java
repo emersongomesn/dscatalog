@@ -17,7 +17,7 @@ import com.devsuperior.dscatalog.entities.Product;
 import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.repositories.ProductRepository;
 import com.devsuperior.dscatalog.services.exceptions.DataBaseException;
-import com.devsuperior.dscatalog.services.exceptions.EntityNotFoundExceptions;
+import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -41,7 +41,7 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public ProductDTO findById(Long id) {
 		Optional<Product> obj = repository.findById(id);
-		Product entity = obj.orElseThrow(() -> new EntityNotFoundExceptions("Entity Not found"));
+		Product entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity Not found"));
 		return new ProductDTO(entity, entity.getCategories());
 	}
 
@@ -61,14 +61,14 @@ public class ProductService {
 			entity = repository.save(entity);
 			return new ProductDTO(entity);
 		} catch (EntityNotFoundException e) {
-			throw new EntityNotFoundException("Id Not Found " + id);
+			throw new EntityNotFoundException("Entity Not Found " + id);
 		}
 	}
 
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long id) {
 		if (!repository.existsById(id)) {
-			throw new EntityNotFoundExceptions("Recurso não encontrado");
+			throw new ResourceNotFoundException("Recurso não encontrado");
 		}
 		try {
 			repository.deleteById(id);
